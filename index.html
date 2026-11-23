@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Claudia Fitness: moda fitness feminina em rosa, preto e branco. Compre e finalize pelo WhatsApp.">
+<title>Claudia Fitness | Loja de roupas</title>
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+
+<header class="topo">
+  <a href="#inicio" class="logo">Claudia<span>Fitness</span></a>
+  <nav id="menu" class="menu" aria-label="Principal">
+    <a href="#inicio">Início</a>
+    <a href="#produtos">Produtos</a>
+    <a href="#sobre">Sobre</a>
+    <a href="#contato">Contato</a>
+    <a href="#trocas">Trocas</a>
+  </nav>
+  <div class="acoes">
+    <button id="btnConta" class="btn-icone" type="button">Entrar</button>
+    <button id="btnCarrinho" class="btn-icone carrinho" type="button" aria-label="Abrir carrinho">Carrinho <b id="qtdCarrinho">0</b></button>
+    <button id="btnMenu" class="hamb" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<main>
+  <section id="inicio" class="hero">
+    <div class="hero-txt">
+      <h1>Moda fitness feminina</h1>
+      <p>Blusas, calças e shorts para treinar com conforto, do PP ao GG. Escolha, monte o carrinho e finalize direto no WhatsApp.</p>
+      <a class="btn" href="#produtos">Ver peças</a>
+    </div>
+    <div class="hero-arte" aria-hidden="true"><span>C</span><span>F</span></div>
+  </section>
+
+  <section id="produtos" class="secao">
+    <h2>Nossas peças</h2>
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar por categoria"></div>
+    <div class="grade" id="grade"></div>
+  </section>
+
+  <section id="sobre" class="secao sobre">
+    <h2>Sobre a Claudia Fitness</h2>
+    <p>A Claudia Fitness é uma loja de moda fitness feminina com blusas, calças e shorts em rosa, preto e branco, nos tamanhos PP, P, M, G e GG. As peças combinam entre si, então você monta o look de treino sem esforço. Atendemos todo o Brasil e conversamos com você pelo WhatsApp do começo ao fim da compra.</p>
+  </section>
+
+  <section id="contato" class="secao contato">
+    <h2>Contato</h2>
+    <p>Dúvidas sobre tamanho, prazo ou pedido? Fale com a gente.</p>
+    <a class="btn" id="linkContato" href="https://wa.me/5584981807021" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape-grid">
+    <section id="trocas">
+      <h3>Trocas e devoluções</h3>
+      <ul>
+        <li>Arrependimento: até 7 dias corridos após o recebimento, conforme o Código de Defesa do Consumidor (art. 49).</li>
+        <li>Defeito de fabricação: até 30 dias após o recebimento.</li>
+        <li>Primeira troca de tamanho ou cor sem custo de envio, em até 15 dias.</li>
+        <li>A peça deve estar sem uso, lavagem ou alteração, com etiqueta.</li>
+        <li>Para solicitar, chame no WhatsApp com o número do pedido.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Segurança</h3>
+      <ul>
+        <li>Login protegido pelo Firebase Authentication. Nunca vemos sua senha.</li>
+        <li>Não pedimos nem guardamos dados de cartão no site.</li>
+        <li>O pagamento é combinado por conversa no WhatsApp. Só confie em mensagens do número oficial desta página.</li>
+        <li>Nunca enviaremos links de pagamento de outros números nem pediremos sua senha.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Privacidade (LGPD)</h3>
+      <ul>
+        <li>Usamos seu nome e e-mail apenas para identificar seu pedido e atender você.</li>
+        <li>Não vendemos nem compartilhamos seus dados.</li>
+        <li>Para corrigir ou excluir seus dados, fale conosco pelo WhatsApp.</li>
+        <li>O carrinho fica salvo somente no seu aparelho.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Atendimento</h3>
+      <ul>
+        <li>WhatsApp: +55 84 98180-7021</li>
+        <li>Seg a sex, 9h às 18h; sáb, 9h às 13h.</li>
+        <li>Entrega para todo o Brasil. Prazo e frete são informados no atendimento.</li>
+      </ul>
+    </section>
+  </div>
+  <p class="copy">&copy; <span id="ano"></span> Claudia Fitness. Todos os direitos reservados.</p>
+</footer>
+
+<div id="fundo" class="fundo" hidden></div>
+
+<aside id="gaveta" class="gaveta" aria-label="Carrinho" aria-hidden="true">
+  <div class="gaveta-topo">
+    <h2>Seu carrinho</h2>
+    <button id="fecharCarrinho" class="fechar" type="button" aria-label="Fechar carrinho">&times;</button>
+  </div>
+  <ul id="itens" class="itens"></ul>
+  <div class="gaveta-base">
+    <p class="total">Total <strong id="total">R$ 0,00</strong></p>
+    <button id="btnFinalizar" class="btn cheio" type="button">Finalizar pelo WhatsApp</button>
+    <button id="btnLimpar" class="btn-link" type="button">Esvaziar carrinho</button>
+  </div>
+</aside>
+
+<dialog id="dlgConta" class="dlg" aria-labelledby="tituloConta">
+  <button id="fecharConta" class="fechar" type="button" aria-label="Fechar">&times;</button>
+  <h2 id="tituloConta">Entrar</h2>
+  <div class="abas" role="tablist">
+    <button type="button" role="tab" id="abaEntrar" aria-selected="true">Entrar</button>
+    <button type="button" role="tab" id="abaCriar" aria-selected="false">Criar conta</button>
+  </div>
+  <p id="avisoConta" class="aviso" role="alert" hidden></p>
+  <form id="formConta" novalidate autocomplete="on">
+    <label id="lblNome" for="nome" hidden>Nome</label>
+    <input id="nome" type="text" maxlength="60" autocomplete="name" hidden>
+    <label for="email">E-mail</label>
+    <input id="email" type="email" maxlength="120" autocomplete="email" required>
+    <label for="senha">Senha</label>
+    <input id="senha" type="password" minlength="8" maxlength="64" autocomplete="current-password" required>
+    <button class="btn cheio" id="btnEnviar" type="submit">Entrar</button>
+  </form>
+  <button id="btnEsqueci" class="btn-link" type="button">Esqueci minha senha</button>
+  <p class="ou">ou</p>
+  <button id="btnGoogle" class="btn claro cheio" type="button">Continuar com Google</button>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
