@@ -1,7 +1,10 @@
-/* Se der qualquer erro, aparece uma faixa vermelha no topo com o motivo */
+/* Se der qualquer erro, aparece uma faixa vermelha no topo com o motivo
+   (e o site volta a mostrar o conteúdo, sem efeitos) */
 window.addEventListener("error", function (e) {
+  document.documentElement.classList.remove("js");
   var d = document.getElementById("erroJs");
   if (!d) { d = document.createElement("div"); d.id = "erroJs"; document.body.appendChild(d); }
+  d.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;background:#c00;color:#fff;padding:10px 16px;font:14px/1.4 monospace;white-space:pre-wrap";
   d.textContent = "Erro no site: " + e.message + " (linha " + e.lineno + ")";
 });
 
@@ -18,22 +21,49 @@ const firebaseConfig = {
 const WHATSAPP = "5584981807021";
 const TAM = ["PP", "P", "M", "G", "GG"];
 
-/* ===== As 8 peças da loja ===== */
+/* ===== As peças da loja ===== */
 const PRODUTOS = [
   { id: "p1", nome: "Blusa Regata Rosa",        cat: "Blusas", preco: 69.9,  cor: "rosa",   t: TAM },
   { id: "p2", nome: "Blusa Cropped Preta",      cat: "Blusas", preco: 74.9,  cor: "preto",  t: TAM },
   { id: "p3", nome: "Blusa Manga Longa Branca", cat: "Blusas", preco: 89.9,  cor: "branco", t: TAM },
-  { id: "p4", nome: "Calça Legging Preta",      cat: "Calças", preco: 119.9, cor: "preto",  t: TAM },
-  { id: "p5", nome: "Calça Legging Rosa",       cat: "Calças", preco: 119.9, cor: "rosa",   t: TAM },
   { id: "p6", nome: "Short Cintura Alta Rosa",  cat: "Shorts", preco: 79.9,  cor: "rosa",   t: TAM },
   { id: "p7", nome: "Short Bike Preto",         cat: "Shorts", preco: 69.9,  cor: "preto",  t: TAM },
   { id: "p8", nome: "Short Esportivo Branco",   cat: "Shorts", preco: 64.9,  cor: "branco", t: TAM }
 ];
 const CORES = ["rosa", "preto", "branco"];
 
-const $ = (id) => document.getElementById(id);
+/* se algum elemento não existir na página, usa um elemento vazio para o resto do código não parar */
+const $ = (id) => document.getElementById(id) || document.createElement("div");
 const brl = (n) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+/* ---------- Efeito de entrada ao rolar a página ---------- */
+/* (usa a posição vertical, porque o bloco começa fora da tela, na lateral) */
+document.documentElement.classList.add("js");
+let revAgendado = false;
+
+function revisar() {
+  revAgendado = false;
+  const pend = document.querySelectorAll(".rev:not(.visivel)");
+  if (!pend.length) return;
+  void document.body.offsetWidth; /* garante que o estado inicial seja desenhado antes de animar */
+  const h = window.innerHeight;
+  pend.forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.top < h * 0.9) el.classList.add("visivel");
+  });
+}
+
+function observarRev() { revisar(); }
+
+function agendarRev() {
+  if (revAgendado) return;
+  revAgendado = true;
+  requestAnimationFrame(revisar);
+}
+window.addEventListener("scroll", agendarRev, { passive: true });
+window.addEventListener("resize", agendarRev);
+window.addEventListener("load", agendarRev);
 
 /* ---------- Toast ---------- */
 let tt;
@@ -65,8 +95,8 @@ function renderFiltros() {
 function renderGrade() {
   $("grade").innerHTML = PRODUTOS
     .filter((p) => filtro === "Todas" || p.cat === filtro)
-    .map((p) => `
-    <article class="card">
+    .map((p, n) => `
+    <article class="card rev" style="--d:${(n % 4) * 90}ms" data-id="${esc(p.id)}" tabindex="0">
       <div class="foto c-${CORES.includes(p.cor) ? p.cor : "rosa"}" aria-hidden="true">CF</div>
       <div class="info">
         <h3>${esc(p.nome)}</h3>
@@ -77,16 +107,60 @@ function renderGrade() {
         <button class="btn" type="button" data-add="${esc(p.id)}">Adicionar ao carrinho</button>
       </div>
     </article>`).join("");
+  observarRev();
 }
 
 $("grade").addEventListener("click", (e) => {
   const b = e.target.closest("[data-add]");
-  if (!b) return;
-  const p = PRODUTOS.find((x) => x.id === b.dataset.add);
-  if (!p) return;
-  const r = b.closest(".card").querySelector("input[type=radio]:checked");
-  adicionar(p.id, r ? r.value : p.t[0]);
+  if (b) {
+    const p = PRODUTOS.find((x) => x.id === b.dataset.add);
+    if (!p) return;
+    const r = b.closest(".card").querySelector("input[type=radio]:checked");
+    adicionar(p.id, r ? r.value : p.t[0]);
+    return;
+  }
+  if (e.target.closest("label, input")) return;
+  const card = e.target.closest(".card");
+  if (!card) return;
+  const r = card.querySelector("input[type=radio]:checked");
+  abrirProduto(card.dataset.id, r ? r.value : null);
 });
+
+$("grade").addEventListener("keydown", (e) => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("card")) {
+    e.preventDefault();
+    const r = e.target.querySelector("input[type=radio]:checked");
+    abrirProduto(e.target.dataset.id, r ? r.value : null);
+  }
+});
+
+/* ---------- Zoom da peça ---------- */
+const dlgProduto = $("dlgProduto");
+let zId = null;
+
+function abrirProduto(id, tamanho) {
+  const p = PRODUTOS.find((x) => x.id === id);
+  if (!p) return;
+  zId = p.id;
+  $("zFoto").className = "foto c-" + (CORES.includes(p.cor) ? p.cor : "rosa");
+  $("zCat").textContent = p.cat;
+  $("zNome").textContent = p.nome;
+  $("zPreco").textContent = brl(p.preco);
+  $("zTam").innerHTML = p.t.map((t) =>
+    `<label><input type="radio" name="z-tam" value="${esc(t)}" ${t === (tamanho || p.t[0]) ? "checked" : ""}><span>${esc(t)}</span></label>`
+  ).join("");
+  if (!dlgProduto.open) dlgProduto.showModal();
+}
+
+$("zAdd").addEventListener("click", () => {
+  const r = $("zTam").querySelector("input[type=radio]:checked");
+  const p = PRODUTOS.find((x) => x.id === zId);
+  if (!p) return;
+  adicionar(p.id, r ? r.value : p.t[0]);
+  dlgProduto.close();
+});
+$("fecharProduto").addEventListener("click", () => dlgProduto.close());
+dlgProduto.addEventListener("click", (e) => { if (e.target === dlgProduto) dlgProduto.close(); });
 
 /* ---------- Carrinho ---------- */
 let carrinho = [];
@@ -166,6 +240,8 @@ function fecharCarrinho() {
 function fecharMenu() {
   menu.classList.remove("aberto");
   btnMenu.setAttribute("aria-expanded", "false");
+  btnMenu.setAttribute("aria-label", "Abrir menu");
+  document.body.classList.remove("trava");
   if (!gaveta.classList.contains("aberta")) fundo.hidden = true;
 }
 
@@ -173,6 +249,8 @@ btnMenu.addEventListener("click", () => {
   const abrir = !menu.classList.contains("aberto");
   menu.classList.toggle("aberto", abrir);
   btnMenu.setAttribute("aria-expanded", String(abrir));
+  btnMenu.setAttribute("aria-label", abrir ? "Fechar menu" : "Abrir menu");
+  document.body.classList.toggle("trava", abrir);
   fundo.hidden = !abrir;
 });
 menu.addEventListener("click", (e) => { if (e.target.tagName === "A") fecharMenu(); });
@@ -180,6 +258,8 @@ fundo.addEventListener("click", () => { fecharCarrinho(); fecharMenu(); });
 $("btnCarrinho").addEventListener("click", abrirCarrinho);
 $("fecharCarrinho").addEventListener("click", fecharCarrinho);
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") { fecharCarrinho(); fecharMenu(); } });
+/* se a tela aumentar com o menu aberto, fecha o menu */
+window.addEventListener("resize", () => { if (window.innerWidth > 820) fecharMenu(); });
 
 /* ---------- Conta: variáveis ---------- */
 let auth = null, user = null, F = null, modo = "entrar";
@@ -246,6 +326,7 @@ renderFiltros();
 renderGrade();
 renderCarrinho();
 atualizarConta();
+observarRev();
 
 /* ---------- Firebase (carrega à parte; se falhar, a loja continua funcionando) ---------- */
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
