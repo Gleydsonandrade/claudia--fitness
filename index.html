@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#43282b">
-<meta name="description" content="Claudia Fitness: moda fitness feminina.">
+<meta name="description" content="Claudia Fitness: moda fitness feminina. Compre e finalize pelo WhatsApp.">
 <title>Claudia Fitness | Loja de roupas</title>
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
-
-
 
 <header class="topo">
   <button id="btnMenu" class="hamb" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
@@ -45,7 +43,7 @@
   <section id="categorias" class="secao categorias">
     <h2 class="rev">Compre por categoria</h2>
     <div class="banners">
-      <a class="banner b1 rev" href="#produtos" data-cat="Blusas">
+      <a class="banner b1 rev" href="#linha-blusas">
         <div class="banner-txt">
           <h3>Blusas</h3>
           <p>Regata, cropped e manga longa para treinar com conforto.</p>
@@ -53,7 +51,7 @@
         </div>
         <div class="banner-arte" aria-hidden="true">CF</div>
       </a>
-      <a class="banner b2 rev" href="#produtos" data-cat="Shorts" style="--d:120ms">
+      <a class="banner b2 rev" href="#linha-shorts" style="--d:120ms">
         <div class="banner-txt">
           <h3>Shorts</h3>
           <p>Cintura alta, bike e esportivo, do PP ao GG.</p>
@@ -66,8 +64,8 @@
 
   <section id="produtos" class="secao">
     <h2 class="rev">Nossas peças</h2>
-    <div class="filtros rev" id="filtros" role="group" aria-label="Filtrar por categoria"></div>
-    <div class="grade" id="grade"></div>
+    <p class="dica rev">Arraste para o lado para ver mais peças.</p>
+    <div id="linhas"></div>
   </section>
 
   <section id="sobre" class="secao sobre rev">
@@ -95,7 +93,6 @@
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
       <div><strong>Compra segura</strong><span>Não guardamos dados de cartão no site</span></div>
     </div>
-   
     <div class="benef rev" style="--d:300ms">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/></svg>
       <div><strong>Trocas e devoluções</strong><span>Arrependimento em até 7 dias</span></div>
@@ -105,6 +102,19 @@
 
 <footer class="rodape">
   <div class="rodape-grid">
+    <section class="rev rodape-marca">
+      <p class="rodape-logo">Claudia<span>Fitness</span></p>
+      <p>Moda fitness feminina. Escolha, monte o carrinho e finalize pelo WhatsApp.</p>
+    </section>
+    <section class="rev" style="--d:50ms">
+      <h3>Links rápidos</h3>
+      <ul>
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="#produtos">Produtos</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </section>
     <section id="trocas" class="rev">
       <h3>Trocas e devoluções</h3>
       <ul>
@@ -141,19 +151,6 @@
         <li>Instagram: <a href="https://www.instagram.com/claudiamodafitness27/" target="_blank" rel="noopener noreferrer">@claudiamodafitness27</a></li>
       </ul>
     </section>
-    <section class="rev" style="--d:50ms">
-      <h3>Links rápidos</h3>
-      <ul>
-        <li><a href="#inicio">Início</a></li>
-        <li><a href="#produtos">Produtos</a></li>
-        <li><a href="#sobre">Sobre</a></li>
-        <li><a href="#contato">Contato</a></li>
-      </ul>
-    </section>
-    <section class="rev rodape-marca">
-      <p class="rodape-logo">Claudia<span>Fitness</span></p>
-      <p>Moda fitness feminina. Escolha, monte o carrinho e finalize pelo WhatsApp.</p>
-    </section>
   </div>
   <p class="copy">&copy; <span id="ano"></span> Claudia Fitness. Todos os direitos reservados.</p>
 </footer>
@@ -176,7 +173,12 @@
 <dialog id="dlgProduto" class="dlg zoom" aria-labelledby="zNome">
   <button id="fecharProduto" class="fechar" type="button" aria-label="Fechar">&times;</button>
   <div class="zoom-grid">
-    <div id="zFoto" class="foto" aria-hidden="true">CF</div>
+    <div id="zGal" class="galeria">
+      <div id="zTrilho" class="gal-trilho"></div>
+      <button id="zAnt" class="gal-seta ant" type="button" aria-label="Ângulo anterior">&#8249;</button>
+      <button id="zProx" class="gal-seta prox" type="button" aria-label="Próximo ângulo">&#8250;</button>
+      <div id="zPontos" class="gal-pontos"></div>
+    </div>
     <div class="zoom-info">
       <small id="zCat" class="zcat"></small>
       <h2 id="zNome"></h2>
@@ -212,6 +214,6 @@
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="app.js?v=12"></script>
+<script src="app.js?v=14"></script>
 </body>
 </html>
