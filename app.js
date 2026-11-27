@@ -4,7 +4,6 @@ window.addEventListener("error", function (e) {
   document.documentElement.classList.remove("js");
   var d = document.getElementById("erroJs");
   if (!d) { d = document.createElement("div"); d.id = "erroJs"; document.body.appendChild(d); }
-  d.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;background:#c00;color:#fff;padding:10px 16px;font:14px/1.4 monospace;white-space:pre-wrap";
   d.textContent = "Erro no site: " + e.message + " (linha " + e.lineno + ")";
 });
 
@@ -21,7 +20,10 @@ const firebaseConfig = {
 const WHATSAPP = "5584981807021";
 const TAM = ["PP", "P", "M", "G", "GG"];
 
-/* ===== As peças da loja ===== */
+/* ===== As peças da loja =====
+   Para colocar fotos reais, adicione "fotos" na peça, na ordem dos ângulos:
+   fotos: ["img/regata-frente.jpg", "img/regata-costas.jpg", "img/regata-lado.jpg"]
+   Sem fotos, aparece o desenho "CF" com o nome do ângulo. */
 const PRODUTOS = [
   { id: "p1", nome: "Blusa Regata Rosa",        cat: "Blusas", preco: 69.9,  cor: "rosa",   t: TAM },
   { id: "p2", nome: "Blusa Cropped Preta",      cat: "Blusas", preco: 74.9,  cor: "preto",  t: TAM },
@@ -31,14 +33,23 @@ const PRODUTOS = [
   { id: "p8", nome: "Short Esportivo Branco",   cat: "Shorts", preco: 64.9,  cor: "branco", t: TAM }
 ];
 const CORES = ["rosa", "preto", "branco"];
+const ANGULOS = ["Frente", "Costas", "Lateral", "Detalhe", "Look completo"];
+
+/* As 3 fileiras de carrossel */
+const LINHAS = [
+  { id: "linha-destaques", titulo: "Destaques", mostra: () => true },
+  { id: "linha-blusas",    titulo: "Blusas",    mostra: (p) => p.cat === "Blusas" },
+  { id: "linha-shorts",    titulo: "Shorts",    mostra: (p) => p.cat === "Shorts" }
+];
 
 /* se algum elemento não existir na página, usa um elemento vazio para o resto do código não parar */
 const $ = (id) => document.getElementById(id) || document.createElement("div");
 const brl = (n) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const corDe = (p) => (CORES.includes(p.cor) ? p.cor : "rosa");
+const qtdAngulos = (p) => (Array.isArray(p.fotos) && p.fotos.length ? p.fotos.length : 3);
 
 /* ---------- Efeito de entrada ao rolar a página ---------- */
-/* (usa a posição vertical, porque o bloco começa fora da tela, na lateral) */
 document.documentElement.classList.add("js");
 let revAgendado = false;
 
@@ -46,15 +57,12 @@ function revisar() {
   revAgendado = false;
   const pend = document.querySelectorAll(".rev:not(.visivel)");
   if (!pend.length) return;
-  void document.body.offsetWidth; /* garante que o estado inicial seja desenhado antes de animar */
   const h = window.innerHeight;
   pend.forEach((el) => {
     const r = el.getBoundingClientRect();
     if (r.top < h * 0.9) el.classList.add("visivel");
   });
 }
-
-function observarRev() { revisar(); }
 
 function agendarRev() {
   if (revAgendado) return;
@@ -75,43 +83,82 @@ function toast(msg) {
   tt = setTimeout(() => { t.hidden = true; }, 3200);
 }
 
-/* ---------- Catálogo ---------- */
-let filtro = "Todas";
-
-function renderFiltros() {
-  const cats = ["Todas"].concat(Array.from(new Set(PRODUTOS.map((p) => p.cat))));
-  const box = $("filtros");
-  box.textContent = "";
-  cats.forEach((c) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.textContent = c;
-    b.setAttribute("aria-pressed", String(c === filtro));
-    b.addEventListener("click", () => { filtro = c; renderFiltros(); renderGrade(); });
-    box.appendChild(b);
-  });
+/* ---------- Foto (ou desenho) de cada ângulo ---------- */
+function fotoHTML(p, i, comRotulo) {
+  const ang = ANGULOS[i] || "Foto " + (i + 1);
+  const url = Array.isArray(p.fotos) ? p.fotos[i] : "";
+  const rot = comRotulo ? `<small class="angulo">${esc(ang)}</small>` : "";
+  if (url) return `<img src="${esc(url)}" alt="${esc(p.nome)} - ${esc(ang)}" loading="lazy" draggable="false">${rot}`;
+  return `CF${rot}`;
 }
 
-function renderGrade() {
-  $("grade").innerHTML = PRODUTOS
-    .filter((p) => filtro === "Todas" || p.cat === filtro)
-    .map((p, n) => `
-    <article class="card rev" style="--d:${(n % 4) * 90}ms" data-id="${esc(p.id)}" tabindex="0">
-      <div class="foto c-${CORES.includes(p.cor) ? p.cor : "rosa"}" aria-hidden="true">CF</div>
+/* ---------- Catálogo em carrossel ---------- */
+function cardHTML(p, linhaId) {
+  const nome = "t-" + linhaId + "-" + p.id;
+  return `
+    <article class="card" data-id="${esc(p.id)}" tabindex="0">
+      <div class="foto c-${corDe(p)}" aria-hidden="true">${fotoHTML(p, 0, false)}</div>
       <div class="info">
         <small class="ccat">${esc(p.cat)}</small>
         <h3>${esc(p.nome)}</h3>
         <span class="preco">${brl(p.preco)}</span>
         <div class="tamanhos" role="radiogroup" aria-label="Tamanho de ${esc(p.nome)}">
-          ${p.t.map((t, i) => `<label><input type="radio" name="t-${esc(p.id)}" value="${esc(t)}" ${i === 0 ? "checked" : ""}><span>${esc(t)}</span></label>`).join("")}
+          ${p.t.map((t, i) => `<label><input type="radio" name="${esc(nome)}" value="${esc(t)}" ${i === 0 ? "checked" : ""}><span>${esc(t)}</span></label>`).join("")}
         </div>
         <button class="btn" type="button" data-add="${esc(p.id)}">Adicionar ao carrinho</button>
       </div>
-    </article>`).join("");
-  observarRev();
+    </article>`;
 }
 
-$("grade").addEventListener("click", (e) => {
+function renderLinhas() {
+  $("linhas").innerHTML = LINHAS.map((l) => {
+    const itens = PRODUTOS.filter(l.mostra);
+    if (!itens.length) return "";
+    return `
+    <div class="linha" id="${esc(l.id)}">
+      <div class="linha-topo"><h3>${esc(l.titulo)}</h3></div>
+      <div class="carrossel">${itens.map((p) => cardHTML(p, l.id)).join("")}</div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll(".carrossel").forEach(ativarCarrossel);
+}
+
+/* arrastar com o mouse no PC (no celular o dedo já arrasta sozinho) */
+function ativarCarrossel(c) {
+  let ponteiro = null, x0 = 0, s0 = 0, moveu = false;
+  c.addEventListener("dragstart", (e) => e.preventDefault());
+  c.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    if (e.target.closest("button, label, input")) return;
+    ponteiro = e.pointerId; x0 = e.clientX; s0 = c.scrollLeft; moveu = false;
+  });
+  c.addEventListener("pointermove", (e) => {
+    if (ponteiro !== e.pointerId) return;
+    const dx = e.clientX - x0;
+    if (!moveu && Math.abs(dx) > 6) {
+      moveu = true;
+      c.classList.add("arrastando");
+      try { c.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    if (moveu) c.scrollLeft = s0 - dx;
+  });
+  const soltar = (e) => {
+    if (ponteiro !== e.pointerId) return;
+    ponteiro = null;
+    c.classList.remove("arrastando");
+    if (moveu) {
+      c.dataset.arrastou = "1"; /* impede que soltar o mouse abra a peça */
+      setTimeout(() => { delete c.dataset.arrastou; }, 0);
+    }
+  };
+  c.addEventListener("pointerup", soltar);
+  c.addEventListener("pointercancel", soltar);
+}
+
+$("linhas").addEventListener("click", (e) => {
+  const car = e.target.closest(".carrossel");
+  if (car && car.dataset.arrastou) return;
+
   const b = e.target.closest("[data-add]");
   if (b) {
     const p = PRODUTOS.find((x) => x.id === b.dataset.add);
@@ -127,7 +174,7 @@ $("grade").addEventListener("click", (e) => {
   abrirProduto(card.dataset.id, r ? r.value : null);
 });
 
-$("grade").addEventListener("keydown", (e) => {
+$("linhas").addEventListener("keydown", (e) => {
   if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("card")) {
     e.preventDefault();
     const r = e.target.querySelector("input[type=radio]:checked");
@@ -135,15 +182,31 @@ $("grade").addEventListener("keydown", (e) => {
   }
 });
 
-/* ---------- Zoom da peça ---------- */
+/* ---------- Zoom da peça com setas de ângulos ---------- */
 const dlgProduto = $("dlgProduto");
-let zId = null;
+let zId = null, zIdx = 0, zTotal = 1;
+
+function irPara(i) {
+  zIdx = (i + zTotal) % zTotal;
+  $("zTrilho").style.transform = "translateX(" + (-zIdx * 100) + "%)";
+  $("zPontos").querySelectorAll("button").forEach((b, n) => b.setAttribute("aria-current", String(n === zIdx)));
+}
 
 function abrirProduto(id, tamanho) {
   const p = PRODUTOS.find((x) => x.id === id);
   if (!p) return;
   zId = p.id;
-  $("zFoto").className = "foto c-" + (CORES.includes(p.cor) ? p.cor : "rosa");
+  zTotal = qtdAngulos(p);
+  const cor = corDe(p);
+  let slides = "", pontos = "";
+  for (let i = 0; i < zTotal; i++) {
+    slides += `<div class="foto c-${cor}" aria-hidden="true">${fotoHTML(p, i, true)}</div>`;
+    pontos += `<button type="button" data-ir="${i}" aria-label="Ver ${esc(ANGULOS[i] || "foto " + (i + 1))}"></button>`;
+  }
+  $("zTrilho").innerHTML = slides;
+  $("zPontos").innerHTML = pontos;
+  $("zAnt").hidden = $("zProx").hidden = $("zPontos").hidden = zTotal < 2;
+  irPara(0);
   $("zCat").textContent = p.cat;
   $("zNome").textContent = p.nome;
   $("zPreco").textContent = brl(p.preco);
@@ -152,6 +215,34 @@ function abrirProduto(id, tamanho) {
   ).join("");
   if (!dlgProduto.open) dlgProduto.showModal();
 }
+
+$("zAnt").addEventListener("click", () => irPara(zIdx - 1));
+$("zProx").addEventListener("click", () => irPara(zIdx + 1));
+$("zPontos").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-ir]");
+  if (b) irPara(Number(b.dataset.ir));
+});
+
+/* deslizar o dedo (ou o mouse) na foto troca o ângulo */
+let galX = null;
+$("zGal").addEventListener("pointerdown", (e) => {
+  if (e.target.closest("button")) return;
+  galX = e.clientX;
+});
+$("zGal").addEventListener("pointerup", (e) => {
+  if (galX === null) return;
+  const dx = e.clientX - galX;
+  galX = null;
+  if (Math.abs(dx) > 40) irPara(zIdx + (dx < 0 ? 1 : -1));
+});
+$("zGal").addEventListener("pointercancel", () => { galX = null; });
+
+/* setas do teclado trocam o ângulo (menos quando está escolhendo o tamanho) */
+dlgProduto.addEventListener("keydown", (e) => {
+  if (e.target.type === "radio") return;
+  if (e.key === "ArrowRight") irPara(zIdx + 1);
+  if (e.key === "ArrowLeft") irPara(zIdx - 1);
+});
 
 $("zAdd").addEventListener("click", () => {
   const r = $("zTam").querySelector("input[type=radio]:checked");
@@ -323,16 +414,10 @@ $("linkContato").href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURICompon
 /* ---------- Início da loja (roda antes do Firebase, assim as peças sempre aparecem) ---------- */
 $("ano").textContent = new Date().getFullYear();
 carregar();
-renderFiltros();
-renderGrade();
+renderLinhas();
 renderCarrinho();
 atualizarConta();
-observarRev();
-
-/* atalhos de categoria (faixas "Compre por categoria") */
-document.querySelectorAll("[data-cat]").forEach((a) => {
-  a.addEventListener("click", () => { filtro = a.dataset.cat; renderFiltros(); renderGrade(); });
-});
+revisar();
 
 /* ---------- Firebase (carrega à parte; se falhar, a loja continua funcionando) ---------- */
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
@@ -344,7 +429,7 @@ const fbPronto = (async () => {
     F = a;
     auth = a.getAuth(app.initializeApp(firebaseConfig));
     a.onAuthStateChanged(auth, (u) => { user = u; atualizarConta(); });
-  } catch (e) { console.error("Firebase indisponível", e); }
+  } catch (e) {}
 })();
 
 async function pronto() {
