@@ -99,6 +99,7 @@ function renderGrade() {
     <article class="card rev" style="--d:${(n % 4) * 90}ms" data-id="${esc(p.id)}" tabindex="0">
       <div class="foto c-${CORES.includes(p.cor) ? p.cor : "rosa"}" aria-hidden="true">CF</div>
       <div class="info">
+        <small class="ccat">${esc(p.cat)}</small>
         <h3>${esc(p.nome)}</h3>
         <span class="preco">${brl(p.preco)}</span>
         <div class="tamanhos" role="radiogroup" aria-label="Tamanho de ${esc(p.nome)}">
@@ -327,6 +328,11 @@ renderGrade();
 renderCarrinho();
 atualizarConta();
 observarRev();
+
+/* atalhos de categoria (faixas "Compre por categoria") */
+document.querySelectorAll("[data-cat]").forEach((a) => {
+  a.addEventListener("click", () => { filtro = a.dataset.cat; renderFiltros(); renderGrade(); });
+});
 
 /* ---------- Firebase (carrega à parte; se falhar, a loja continua funcionando) ---------- */
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
