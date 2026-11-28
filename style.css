@@ -59,7 +59,7 @@ h1,h2,h3{line-height:1.15;letter-spacing:-.02em;font-weight:700}
 /* ===== Capa ===== */
 .hero{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:clamp(24px,5vw,72px);max-width:1280px;margin:0 auto;padding:clamp(20px,4vw,56px) clamp(16px,4vw,48px)}
 .hero-foto{order:2;position:relative;overflow:hidden;aspect-ratio:4/5;max-height:620px;width:100%;border-radius:var(--raio);background:linear-gradient(160deg,var(--bege-cl),var(--bege));display:grid;place-items:center}
-.hero-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:86% 60%}
 .hero-foto span{font-size:clamp(4rem,10vw,7rem);font-weight:700;letter-spacing:.05em;color:rgba(67,40,43,.18)}
 .hero-txt{order:1}
 .hero h1{font-size:clamp(2.2rem,5.4vw,4rem);margin-bottom:16px}
@@ -199,6 +199,20 @@ form .btn{margin-top:14px}
 .js .rev{opacity:0;transform:translateY(24px);transition:opacity .7s ease var(--d,0ms),transform .8s cubic-bezier(.16,.84,.3,1) var(--d,0ms)}
 .js .rev.visivel{opacity:1;transform:none}
 
+/* capa em tela cheia, com o texto por cima da foto (só no computador) */
+@media(min-width:901px){
+  .hero{position:relative;display:flex;align-items:center;max-width:none;min-height:calc(100vh - 65px);min-height:calc(100svh - 65px);padding:64px max(48px,calc((100% - 1184px) / 2));overflow:hidden}
+  .hero-foto{position:absolute;inset:0;aspect-ratio:auto;max-height:none;border-radius:0;z-index:0}
+  .hero-foto img{object-position:center 72%}
+  .hero-foto::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(43,25,27,.82) 0%,rgba(43,25,27,.6) 34%,rgba(43,25,27,.1) 60%,rgba(43,25,27,0) 75%)}
+  .js .hero-foto.rev{transform:none}
+  .hero-txt{position:relative;z-index:1;max-width:560px;color:var(--fundo)}
+  .hero .eyebrow{color:var(--bege)}
+  .hero p{color:rgba(250,247,243,.85)}
+  .hero .btn{background:var(--fundo);color:var(--marca);border-color:var(--fundo)}
+  .hero .btn:hover{background:var(--bege);border-color:var(--bege)}
+}
+
 @media(max-width:900px){
   .topo{padding:8px 12px;grid-template-columns:auto 1fr auto;gap:8px}
   .hamb{display:flex}
@@ -211,6 +225,7 @@ form .btn{margin-top:14px}
   .btn-topo{padding:7px 12px;font-size:.85rem}
   .hero{grid-template-columns:1fr;padding-top:16px}
   .hero-foto{order:1;aspect-ratio:4/3.4}
+  .hero-foto img{object-position:80% 55%}
   .hero-txt{order:2}
   .hero .btn{max-width:none}
   .beneficios-grid{grid-template-columns:1fr 1fr;gap:20px}
