@@ -3,151 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#43282b">
-<meta name="description" content="Claudia Fitness: moda fitness feminina. Compre e finalize pelo WhatsApp.">
-<title>Claudia Fitness | Loja de roupas</title>
-<link rel="stylesheet" href="style.css?v=14">
+<meta name="theme-color" content="#43282B">
+<meta name="description" content="Claudia Fitness: moda fitness feminina. Conjuntos, tops, blusas e shorts para treinar com conforto e estilo.">
+<title>Claudia Fitness | Moda fitness feminina</title>
+<link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
 
 <header class="topo">
   <button id="btnMenu" class="hamb" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
-  <a href="#inicio" class="logo">Claudia<span>Fitness</span></a>
   <nav id="menu" class="menu" aria-label="Principal">
     <a href="#inicio">Início</a>
-    <a href="#produtos">Produtos</a>
+    <a href="#produtos">Coleção</a>
     <a href="#sobre">Sobre</a>
     <a href="#contato">Contato</a>
     <a href="#trocas">Trocas</a>
   </nav>
+  <a href="#inicio" class="logo">
+    <strong>Claudia Fitness</strong>
+    <small>Moda fitness feminina</small>
+  </a>
   <div class="acoes">
-    <button id="btnConta" class="btn-icone" type="button">Entrar</button>
-    <button id="btnCarrinho" class="btn-icone carrinho" type="button" aria-label="Abrir carrinho">
-      <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-      <span class="rot">Carrinho</span> <b id="qtdCarrinho">0</b>
+    <button id="btnConta" class="btn-topo" type="button">Entrar</button>
+    <button id="btnCarrinho" class="btn-topo carrinho" type="button" aria-label="Abrir sacola">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+      <b id="qtdCarrinho">0</b>
     </button>
   </div>
 </header>
 
 <main>
   <section id="inicio" class="hero">
-    <div class="hero-txt rev">
-      <span class="eyebrow">Claudia Fitness</span>
-      <h1>Moda fitness <em>feminina</em></h1>
-      <p>Blusas e shorts para treinar com conforto, do PP ao GG. Escolha, monte o carrinho e finalize direto no WhatsApp.</p>
-      <a class="btn" href="#produtos">Ver peças</a>
+    <div class="hero-foto rev" aria-hidden="true">
+      <!-- Para usar sua foto, troque o <span> abaixo por: <img src="img/capa.jpg" alt=""> -->
+      <span>CF</span>
     </div>
-    <div class="hero-arte rev" style="--d:150ms" aria-hidden="true"><span>C</span><span>F</span></div>
+    <div class="hero-txt rev" style="--d:120ms">
+      <span class="eyebrow">Nova coleção</span>
+      <h1>Feita para acompanhar o seu movimento.</h1>
+      <p>Conforto, estilo e confiança do PP ao GG.</p>
+      <a class="btn btn-cheio" href="#produtos">Conheça a coleção</a>
+    </div>
   </section>
 
   <section id="categorias" class="secao categorias">
     <h2 class="rev">Compre por categoria</h2>
-    <div class="banners">
-      <a class="banner b1 rev" href="#linha-blusas">
-        <div class="banner-txt">
-          <h3>Blusas</h3>
-          <p>Regata, cropped e manga longa para treinar com conforto.</p>
-          <span class="btn">Ver blusas</span>
-        </div>
-        <div class="banner-arte" aria-hidden="true">CF</div>
-      </a>
-      <a class="banner b2 rev" href="#linha-shorts" style="--d:120ms">
-        <div class="banner-txt">
-          <h3>Shorts</h3>
-          <p>Cintura alta, bike e esportivo, do PP ao GG.</p>
-          <span class="btn">Ver shorts</span>
-        </div>
-        <div class="banner-arte" aria-hidden="true">CF</div>
-      </a>
+    <div class="cats">
+      <a class="cat rev" href="#linha-conjuntos"><span class="cat-arte" aria-hidden="true">CF</span><strong>Conjuntos</strong></a>
+      <a class="cat rev" href="#linha-blusas" style="--d:80ms"><span class="cat-arte" aria-hidden="true">CF</span><strong>Blusas</strong></a>
+      <a class="cat rev" href="#linha-shorts" style="--d:160ms"><span class="cat-arte" aria-hidden="true">CF</span><strong>Shorts</strong></a>
     </div>
   </section>
 
-  <section id="produtos" class="secao">
-    <h2 class="rev">Nossas peças</h2>
-    <p class="dica rev">Arraste para o lado para ver mais peças.</p>
+  <section id="produtos" class="secao produtos">
     <div id="linhas"></div>
   </section>
 
+  <section class="beneficios" aria-label="Vantagens">
+    <div class="beneficios-grid">
+      <div class="benef rev">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 14.6 14.6 20.4a2 2 0 0 1-2.8 0L3 11.6V3h8.6l8.8 8.8a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+        <div><strong>Do PP ao GG</strong><span>Grade completa de tamanhos</span></div>
+      </div>
+      <div class="benef rev" style="--d:80ms">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <div><strong>Compra segura</strong><span>Não guardamos dados de cartão</span></div>
+      </div>
+      <div class="benef rev" style="--d:240ms">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/></svg>
+        <div><strong>Trocas facilitadas</strong><span>Arrependimento em até 7 dias</span></div>
+      </div>
+    </div>
+  </section>
+
   <section id="sobre" class="secao sobre rev">
+    <span class="eyebrow">Nossa história</span>
     <h2>Sobre a Claudia Fitness</h2>
-    <p>A Claudia Fitness é uma loja de moda fitness feminina com blusas e shorts nos tamanhos PP, P, M, G e GG. As peças combinam entre si, então você monta o look de treino sem esforço. Conversamos com você pelo WhatsApp do começo ao fim da compra.</p>
+    <p>A Claudia Fitness é uma marca de moda fitness feminina com conjuntos, blusas e shorts nos tamanhos PP, P, M, G e GG. As peças combinam entre si, para você montar o look de treino com facilidade e se sentir bem em cada movimento.</p>
   </section>
 
   <section id="contato" class="secao contato rev">
-    <h2>Contato</h2>
-    <p>Dúvidas sobre tamanho, prazo ou pedido? Fale com a gente.</p>
+    <h2>Fale com a gente</h2>
+    <p>Dúvidas sobre tamanhos, prazos ou pedidos? Nossa equipe está pronta para ajudar.</p>
     <div class="botoes">
-      <a class="btn" id="linkContato" href="https://wa.me/5584981807021" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
-      <a class="btn" href="https://www.instagram.com/claudiamodafitness27/" target="_blank" rel="noopener noreferrer">Conheça nosso Instagram</a>
+      <a class="btn" id="linkContato" href="https://wa.me/5584981807021" target="_blank" rel="noopener noreferrer">Atendimento</a>
+      <a class="btn btn-claro" href="https://www.instagram.com/claudiamodafitness27/" target="_blank" rel="noopener noreferrer">Instagram</a>
     </div>
   </section>
 </main>
 
-<section class="beneficios" aria-label="Vantagens">
-  <div class="beneficios-grid">
-    <div class="benef rev">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg>
-      <div><strong>Prazo e frete</strong><span>Informados no atendimento pelo WhatsApp</span></div>
-    </div>
-    <div class="benef rev" style="--d:100ms">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
-      <div><strong>Compra segura</strong><span>Não guardamos dados de cartão no site</span></div>
-    </div>
-    <div class="benef rev" style="--d:300ms">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/></svg>
-      <div><strong>Trocas e devoluções</strong><span>Arrependimento em até 7 dias</span></div>
-    </div>
-  </div>
-</section>
-
 <footer class="rodape">
   <div class="rodape-grid">
-    <section class="rev rodape-marca">
-      <p class="rodape-logo">Claudia<span>Fitness</span></p>
-      <p>Moda fitness feminina. Escolha, monte o carrinho e finalize pelo WhatsApp.</p>
+    <section class="rodape-marca">
+      <p class="rodape-logo">Claudia Fitness</p>
+      <p>Moda fitness feminina do PP ao GG.</p>
     </section>
-    <section class="rev" style="--d:50ms">
+    <section>
       <h3>Links rápidos</h3>
       <ul>
         <li><a href="#inicio">Início</a></li>
-        <li><a href="#produtos">Produtos</a></li>
+        <li><a href="#produtos">Coleção</a></li>
         <li><a href="#sobre">Sobre</a></li>
         <li><a href="#contato">Contato</a></li>
       </ul>
     </section>
-    <section id="trocas" class="rev">
+    <section id="trocas">
       <h3>Trocas e devoluções</h3>
       <ul>
         <li>Arrependimento: até 7 dias corridos após o recebimento, conforme o Código de Defesa do Consumidor (art. 49).</li>
         <li>Defeito de fabricação: até 30 dias após o recebimento.</li>
         <li>Primeira troca de tamanho ou cor sem custo de envio, em até 15 dias.</li>
         <li>A peça deve estar sem uso, lavagem ou alteração, com etiqueta.</li>
-        <li>Para solicitar, chame no WhatsApp com o número do pedido.</li>
+        <li>Para solicitar, fale com nosso atendimento informando o número do pedido.</li>
       </ul>
     </section>
-    <section class="rev" style="--d:100ms">
+    <section>
       <h3>Segurança</h3>
       <ul>
         <li>Login protegido pelo Firebase Authentication. Nunca vemos sua senha.</li>
         <li>Não pedimos nem guardamos dados de cartão no site.</li>
-        <li>O pagamento é combinado por conversa no WhatsApp. Só confie em mensagens do número oficial desta página.</li>
-        <li>Nunca enviaremos links de pagamento de outros números nem pediremos sua senha.</li>
+        <li>O pagamento é combinado com nosso atendimento oficial. Desconfie de contatos de outros números.</li>
+        <li>Nunca pediremos sua senha.</li>
       </ul>
     </section>
-    <section class="rev" style="--d:200ms">
+    <section>
       <h3>Privacidade (LGPD)</h3>
       <ul>
         <li>Usamos seu nome e e-mail apenas para identificar seu pedido e atender você.</li>
         <li>Não vendemos nem compartilhamos seus dados.</li>
-        <li>Para corrigir ou excluir seus dados, fale conosco pelo WhatsApp.</li>
-        <li>O carrinho fica salvo somente no seu aparelho.</li>
+        <li>Para corrigir ou excluir seus dados, fale com nosso atendimento.</li>
+        <li>A sacola fica salva somente no seu aparelho.</li>
       </ul>
     </section>
-    <section class="rev" style="--d:300ms">
+    <section>
       <h3>Atendimento</h3>
       <ul>
-        <li>WhatsApp: +55 84 99429-3320</li>
-        <li>Prazo e frete são informados no atendimento.</li>
+        <li>WhatsApp: +55 84 98180-7021</li>
+        <li>Seg a sex, 9h às 18h; sáb, 9h às 13h.</li>
         <li>Instagram: <a href="https://www.instagram.com/claudiamodafitness27/" target="_blank" rel="noopener noreferrer">@claudiamodafitness27</a></li>
       </ul>
     </section>
@@ -157,16 +149,16 @@
 
 <div id="fundo" class="fundo" hidden></div>
 
-<aside id="gaveta" class="gaveta" aria-label="Carrinho" aria-hidden="true">
+<aside id="gaveta" class="gaveta" aria-label="Sacola" aria-hidden="true">
   <div class="gaveta-topo">
-    <h2>Seu carrinho</h2>
-    <button id="fecharCarrinho" class="fechar" type="button" aria-label="Fechar carrinho">&times;</button>
+    <h2>Sua sacola</h2>
+    <button id="fecharCarrinho" class="fechar" type="button" aria-label="Fechar sacola">&times;</button>
   </div>
   <ul id="itens" class="itens"></ul>
   <div class="gaveta-base">
     <p class="total">Total <strong id="total">R$ 0,00</strong></p>
-    <button id="btnFinalizar" class="btn cheio" type="button">Finalizar pelo WhatsApp</button>
-    <button id="btnLimpar" class="btn-link" type="button">Esvaziar carrinho</button>
+    <button id="btnFinalizar" class="btn btn-cheio" type="button">Finalizar pedido</button>
+    <button id="btnLimpar" class="btn-link" type="button">Esvaziar sacola</button>
   </div>
 </aside>
 
@@ -175,17 +167,18 @@
   <div class="zoom-grid">
     <div id="zGal" class="galeria">
       <div id="zTrilho" class="gal-trilho"></div>
-      <button id="zAnt" class="gal-seta ant" type="button" aria-label="Ângulo anterior">&#8249;</button>
-      <button id="zProx" class="gal-seta prox" type="button" aria-label="Próximo ângulo">&#8250;</button>
+      <button id="zAnt" class="gal-seta ant" type="button" aria-label="Foto anterior">&#8249;</button>
+      <button id="zProx" class="gal-seta prox" type="button" aria-label="Próxima foto">&#8250;</button>
       <div id="zPontos" class="gal-pontos"></div>
     </div>
     <div class="zoom-info">
       <small id="zCat" class="zcat"></small>
       <h2 id="zNome"></h2>
-      <span id="zPreco" class="preco zpreco"></span>
-      <p class="zdesc">Escolha o tamanho e adicione ao carrinho. Dúvidas sobre medidas? Chame a gente no WhatsApp.</p>
+      <span id="zPreco" class="zpreco"></span>
+      <p class="zrot">Tamanho</p>
       <div id="zTam" class="tamanhos" role="radiogroup" aria-label="Tamanho"></div>
-      <button id="zAdd" class="btn cheio" type="button">Adicionar ao carrinho</button>
+      <button id="zAdd" class="btn btn-cheio" type="button">Adicionar à sacola</button>
+      <p class="zdesc">Dúvidas sobre medidas? Fale com nosso atendimento.</p>
     </div>
   </div>
 </dialog>
@@ -205,15 +198,15 @@
     <input id="email" type="email" maxlength="120" autocomplete="email" required>
     <label for="senha">Senha</label>
     <input id="senha" type="password" minlength="8" maxlength="64" autocomplete="current-password" required>
-    <button class="btn cheio" id="btnEnviar" type="submit">Entrar</button>
+    <button class="btn btn-cheio" id="btnEnviar" type="submit">Entrar</button>
   </form>
   <button id="btnEsqueci" class="btn-link" type="button">Esqueci minha senha</button>
   <p class="ou">ou</p>
-  <button id="btnGoogle" class="btn claro cheio" type="button">Continuar com Google</button>
+  <button id="btnGoogle" class="btn btn-claro btn-cheio" type="button">Entrar com Google</button>
 </dialog>
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="app.js?v=14"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>
