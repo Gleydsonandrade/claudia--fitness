@@ -23,8 +23,12 @@ const TAM = ["PP", "P", "M", "G", "GG"];
 /* ===== As peças da loja =====
    Para colocar fotos reais, adicione "fotos" na peça, na ordem dos ângulos:
    fotos: ["img/regata-frente.jpg", "img/regata-costas.jpg", "img/regata-lado.jpg"]
+   Para dar nome a cada foto, use "angulos": ["Frente", "Costas", "Lateral"]
    Sem fotos, aparece o desenho "CF" com o nome do ângulo. */
 const PRODUTOS = [
+  { id: "c1", nome: "Conjunto Top e Short Laranja", cat: "Conjuntos", preco: 139.9, cor: "rosa", t: TAM,
+    fotos: ["img/conjunto-laranja-frente.jpg", "img/conjunto-laranja-top.jpg", "img/conjunto-laranja-short.jpg", "img/conjunto-laranja-detalhe.jpg"],
+    angulos: ["Conjunto", "Top", "Short", "Detalhe"] },
   { id: "p1", nome: "Blusa Regata Rosa",        cat: "Blusas", preco: 69.9,  cor: "rosa",   t: TAM },
   { id: "p2", nome: "Blusa Cropped Preta",      cat: "Blusas", preco: 74.9,  cor: "preto",  t: TAM },
   { id: "p3", nome: "Blusa Manga Longa Branca", cat: "Blusas", preco: 89.9,  cor: "branco", t: TAM },
@@ -35,9 +39,10 @@ const PRODUTOS = [
 const CORES = ["rosa", "preto", "branco"];
 const ANGULOS = ["Frente", "Costas", "Lateral", "Detalhe", "Look completo"];
 
-/* As 3 fileiras de carrossel */
+/* As fileiras de carrossel (a primeira mostra todas as peças) */
 const LINHAS = [
   { id: "linha-destaques", titulo: "Destaques", mostra: () => true },
+  { id: "linha-conjuntos", titulo: "Conjuntos", mostra: (p) => p.cat === "Conjuntos" },
   { id: "linha-blusas",    titulo: "Blusas",    mostra: (p) => p.cat === "Blusas" },
   { id: "linha-shorts",    titulo: "Shorts",    mostra: (p) => p.cat === "Shorts" }
 ];
@@ -47,6 +52,7 @@ const $ = (id) => document.getElementById(id) || document.createElement("div");
 const brl = (n) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const corDe = (p) => (CORES.includes(p.cor) ? p.cor : "rosa");
+const nomeAngulo = (p, i) => (Array.isArray(p.angulos) && p.angulos[i]) || ANGULOS[i] || "Foto " + (i + 1);
 const qtdAngulos = (p) => (Array.isArray(p.fotos) && p.fotos.length ? p.fotos.length : 3);
 
 /* ---------- Efeito de entrada ao rolar a página ---------- */
@@ -85,7 +91,7 @@ function toast(msg) {
 
 /* ---------- Foto (ou desenho) de cada ângulo ---------- */
 function fotoHTML(p, i, comRotulo) {
-  const ang = ANGULOS[i] || "Foto " + (i + 1);
+  const ang = nomeAngulo(p, i);
   const url = Array.isArray(p.fotos) ? p.fotos[i] : "";
   const rot = comRotulo ? `<small class="angulo">${esc(ang)}</small>` : "";
   if (url) return `<img src="${esc(url)}" alt="${esc(p.nome)} - ${esc(ang)}" loading="lazy" draggable="false">${rot}`;
@@ -93,19 +99,13 @@ function fotoHTML(p, i, comRotulo) {
 }
 
 /* ---------- Catálogo em carrossel ---------- */
-function cardHTML(p, linhaId) {
-  const nome = "t-" + linhaId + "-" + p.id;
+function cardHTML(p) {
   return `
-    <article class="card" data-id="${esc(p.id)}" tabindex="0">
+    <article class="card" data-id="${esc(p.id)}" tabindex="0" aria-label="${esc(p.nome)}, ${brl(p.preco)}">
       <div class="foto c-${corDe(p)}" aria-hidden="true">${fotoHTML(p, 0, false)}</div>
       <div class="info">
-        <small class="ccat">${esc(p.cat)}</small>
         <h3>${esc(p.nome)}</h3>
         <span class="preco">${brl(p.preco)}</span>
-        <div class="tamanhos" role="radiogroup" aria-label="Tamanho de ${esc(p.nome)}">
-          ${p.t.map((t, i) => `<label><input type="radio" name="${esc(nome)}" value="${esc(t)}" ${i === 0 ? "checked" : ""}><span>${esc(t)}</span></label>`).join("")}
-        </div>
-        <button class="btn" type="button" data-add="${esc(p.id)}">Adicionar ao carrinho</button>
       </div>
     </article>`;
 }
@@ -116,8 +116,8 @@ function renderLinhas() {
     if (!itens.length) return "";
     return `
     <div class="linha" id="${esc(l.id)}">
-      <div class="linha-topo"><h3>${esc(l.titulo)}</h3></div>
-      <div class="carrossel">${itens.map((p) => cardHTML(p, l.id)).join("")}</div>
+      <div class="linha-topo rev"><h2>${esc(l.titulo)}</h2><small>${itens.length} ${itens.length === 1 ? "peça" : "peças"}</small></div>
+      <div class="carrossel">${itens.map(cardHTML).join("")}</div>
     </div>`;
   }).join("");
   document.querySelectorAll(".carrossel").forEach(ativarCarrossel);
@@ -129,7 +129,6 @@ function ativarCarrossel(c) {
   c.addEventListener("dragstart", (e) => e.preventDefault());
   c.addEventListener("pointerdown", (e) => {
     if (e.pointerType !== "mouse" || e.button !== 0) return;
-    if (e.target.closest("button, label, input")) return;
     ponteiro = e.pointerId; x0 = e.clientX; s0 = c.scrollLeft; moveu = false;
   });
   c.addEventListener("pointermove", (e) => {
@@ -159,26 +158,14 @@ $("linhas").addEventListener("click", (e) => {
   const car = e.target.closest(".carrossel");
   if (car && car.dataset.arrastou) return;
 
-  const b = e.target.closest("[data-add]");
-  if (b) {
-    const p = PRODUTOS.find((x) => x.id === b.dataset.add);
-    if (!p) return;
-    const r = b.closest(".card").querySelector("input[type=radio]:checked");
-    adicionar(p.id, r ? r.value : p.t[0]);
-    return;
-  }
-  if (e.target.closest("label, input")) return;
   const card = e.target.closest(".card");
-  if (!card) return;
-  const r = card.querySelector("input[type=radio]:checked");
-  abrirProduto(card.dataset.id, r ? r.value : null);
+  if (card) abrirProduto(card.dataset.id, null);
 });
 
 $("linhas").addEventListener("keydown", (e) => {
   if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("card")) {
     e.preventDefault();
-    const r = e.target.querySelector("input[type=radio]:checked");
-    abrirProduto(e.target.dataset.id, r ? r.value : null);
+    abrirProduto(e.target.dataset.id, null);
   }
 });
 
@@ -201,7 +188,7 @@ function abrirProduto(id, tamanho) {
   let slides = "", pontos = "";
   for (let i = 0; i < zTotal; i++) {
     slides += `<div class="foto c-${cor}" aria-hidden="true">${fotoHTML(p, i, true)}</div>`;
-    pontos += `<button type="button" data-ir="${i}" aria-label="Ver ${esc(ANGULOS[i] || "foto " + (i + 1))}"></button>`;
+    pontos += `<button type="button" data-ir="${i}" aria-label="Ver ${esc(nomeAngulo(p, i))}"></button>`;
   }
   $("zTrilho").innerHTML = slides;
   $("zPontos").innerHTML = pontos;
@@ -279,7 +266,7 @@ function adicionar(id, t) {
   if (i) i.q = Math.min(i.q + 1, 10);
   else carrinho.push({ id: id, t: t, q: 1 });
   salvar();
-  toast("Adicionado ao carrinho");
+  toast("Adicionado à sacola");
 }
 
 const totalCarrinho = () => carrinho.reduce((s, i) => s + PRODUTOS.find((p) => p.id === i.id).preco * i.q, 0);
@@ -289,7 +276,7 @@ function renderCarrinho() {
   $("total").textContent = brl(totalCarrinho());
   const ul = $("itens");
   if (!carrinho.length) {
-    ul.innerHTML = '<li class="vazio">Seu carrinho está vazio. Escolha uma peça para começar.</li>';
+    ul.innerHTML = '<li class="vazio">Sua sacola está vazia. Escolha uma peça para começar.</li>';
     return;
   }
   ul.innerHTML = carrinho.map((i, n) => {
@@ -375,6 +362,7 @@ function definirModo(m) {
   $("nome").required = criar;
   $("senha").autocomplete = criar ? "new-password" : "current-password";
   $("btnEsqueci").hidden = criar;
+  $("btnGoogle").textContent = criar ? "Criar conta com Google" : "Entrar com Google";
   aviso("");
 }
 
@@ -443,9 +431,9 @@ async function pronto() {
 
 const ERROS = {
   "auth/invalid-email": "E-mail inválido.",
-  "auth/user-not-found": "E-mail ou senha incorretos.",
+  "auth/user-not-found": "Não existe conta com este e-mail. Use a aba Criar conta.",
   "auth/wrong-password": "E-mail ou senha incorretos.",
-  "auth/invalid-credential": "E-mail ou senha incorretos.",
+  "auth/invalid-credential": "E-mail ou senha incorretos. Se ainda não tem conta, use a aba Criar conta.",
   "auth/email-already-in-use": "Este e-mail já tem conta. Use a aba Entrar.",
   "auth/weak-password": "Senha fraca. Use ao menos 8 caracteres.",
   "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos e tente de novo.",
@@ -489,12 +477,27 @@ $("formConta").addEventListener("submit", async (e) => {
   finally { btn.disabled = false; }
 });
 
+/* Google: na aba Entrar, só entra quem já tem conta.
+   Se a conta Google ainda não foi cadastrada, ela é apagada na hora e pedimos para criar. */
 $("btnGoogle").addEventListener("click", async () => {
   if (!(await pronto())) return;
+  const criando = modo === "criar";
   try {
-    await F.signInWithPopup(auth, new F.GoogleAuthProvider());
+    const r = await F.signInWithPopup(auth, new F.GoogleAuthProvider());
+    const info = F.getAdditionalUserInfo(r);
+    const nova = !!(info && info.isNewUser);
+    if (!criando && nova) {
+      try { await r.user.delete(); } catch (e) { await F.signOut(auth); }
+      user = null;
+      atualizarConta();
+      definirModo("criar");
+      aviso("Esta conta Google ainda não foi cadastrada. Para criar, toque em \"Criar conta com Google\".");
+      return;
+    }
     dlg.close();
-    toast("Login com Google feito!");
+    if (criando && nova) toast("Conta criada com Google!");
+    else if (criando) toast("Você já tinha conta. Login feito!");
+    else toast("Login com Google feito!");
   } catch (err) { aviso(msgErro(err)); }
 });
 
